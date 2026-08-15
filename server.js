@@ -91,6 +91,10 @@ connectDB();
 // -------------------------------------------------------------
 // 2. ROUTE REGISTRASI (MongoClient)
 // -------------------------------------------------------------
+// Menampilkan Halaman Register
+app.get('/register', (req, res) => {
+    res.render('register', { error: null });
+});
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
@@ -134,6 +138,10 @@ app.post('/register', async (req, res) => {
 // -------------------------------------------------------------
 // 3. ROUTE LOGIN (MongoClient)
 // -------------------------------------------------------------
+// Menampilkan Halaman Login
+app.get('/login', (req, res) => {
+    res.render('login', { error: null });
+});
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
 
