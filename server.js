@@ -65,56 +65,94 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-const mongoose = require('mongoose');
+const { MongoClient } = require('mongodb');
 
-// Ganti bagian ini dengan Connection String dari screenshot-mu
-// Pastikan kamu mengganti <db_username> dengan username database-mu!
-const dbURI = "mongodb+srv://dyraaguest_db_user:j7jP600GTPhcxLe@database.72hinz0.mongodb.net/?appName=Database";
+// -------------------------------------------------------------
+// 1. KONEKSI MONGODB ATLAS MENGGUNAKAN MONGO CLIENT
+// Pastikan tanda kurung siku <> di username sudah dihapus
+// -------------------------------------------------------------
+const uri = "mongodb+srv://dyraaguest_db_user:j7jP600GTPhcxLe@database.72hinz0.mongodb.net/?appName=Database";
+const client = new MongoClient(uri);
 
-mongoose.connect(dbURI)
-  .then(() => console.log('✅ Terhubung ke MongoDB Atlas!'))
-  .catch((err) => console.log('❌ Gagal koneksi:', err));
+let db;
 
-// Definisikan Skema Data (Struktur User)
-const UserSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    role: { type: String, default: 'user' }
+async function connectDB() {
+    try {
+        await client.connect();
+        // Menentukan nama database yang akan digunakan (misal: 'gta_hub_db')
+        db = client.db('gta_hub_db');
+        console.log('✅ BERHASIL: Terhubung ke MongoDB Cloud via MongoClient!');
+    } catch (err) {
+        console.error('❌ GAGAL KONEKSI MONGODB:', err.message);
+    }
+}
+connectDB();
+
+// -------------------------------------------------------------
+// 2. ROUTE REGISTRASI (MongoClient)
+// -------------------------------------------------------------
+app.post('/register', async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.render('register', { error: 'Username dan Password wajib diisi!' });
+    }
+
+    try {
+        const usersCollection = db.collection('users');
+
+        // Cek apakah username sudah ada di koleksi 'users'
+        const userExist = await usersCollection.findOne({ username });
+        if (userExist) {
+            return res.render('register', { error: 'Username sudah terdaftar!' });
+        }
+
+        // Enkripsi Password
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // Cek jumlah dokumen untuk menentukan role admin pertama
+        const count = await usersCollection.countDocuments();
+        const role = (count === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
+
+        // Simpan dokumen user baru
+        await usersCollection.insertOne({
+            username: username,
+            password: hashedPassword,
+            role: role,
+            createdAt: new Date()
+        });
+        
+        console.log(`✅ User "${username}" berhasil disimpan via MongoClient!`);
+        res.redirect('/login');
+
+    } catch (err) {
+        console.error('❌ DETIL ERROR REGISTRASI:', err);
+        res.render('register', { error: 'Gagal mendaftar: ' + err.message });
+    }
 });
-const User = mongoose.model('User', UserSchema);
 
-
-// --- ROUTE AKUN ---
-app.get('/login', (req, res) => res.render('login', { error: null }));
+// -------------------------------------------------------------
+// 3. ROUTE LOGIN (MongoClient)
+// -------------------------------------------------------------
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
+
     try {
-        const user = await User.findOne({ username }); // Mencari user di MongoDB
+        const usersCollection = db.collection('users');
+
+        // Cari dokumen user berdasarkan username
+        const user = await usersCollection.findOne({ username });
+
         if (user && await bcrypt.compare(password, user.password)) {
             req.session.user = { username: user.username, role: user.role };
             return res.redirect('/beranda');
         }
+
         res.render('login', { error: 'Username atau password salah!' });
+
     } catch (err) {
+        console.error('❌ DETIL ERROR LOGIN:', err);
         res.render('login', { error: 'Terjadi kesalahan sistem.' });
-    }
-});
-
-app.get('/register', (req, res) => res.render('register', { error: null }));
-app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
-    try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Cek apakah ada user sama sekali (untuk menentukan admin pertama)
-        const count = await User.countDocuments();
-        const role = (count === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
-
-        const newUser = new User({ username, password: hashedPassword, role });
-        await newUser.save(); // Data tersimpan permanen di Cloud!
-        res.redirect('/login');
-    } catch (err) {
-        res.render('register', { error: 'Username sudah terdaftar!' });
     }
 });
 
