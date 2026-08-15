@@ -98,6 +98,9 @@ async function getDatabase() {
 }
 
 // 2. ROUTE REGISTRASI
+app.get('/register', (req, res) => {
+    res.render('register', { error: null });
+});
 app.post('/register', async (req, res) => {
   const { username, password } = req.body;
 
