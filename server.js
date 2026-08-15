@@ -74,27 +74,25 @@ const { MongoClient } = require('mongodb');
 const uri = "mongodb+srv://dyraaguest_db_user:j7jP600GTPhcxLe@database.72hinz0.mongodb.net/?appName=Database";
 const client = new MongoClient(uri);
 
-let db;
+// Variabel penampung koneksi global
+let dbInstance = null;
 
-async function connectDB() {
-    try {
+// -------------------------------------------------------------
+// 2. FUNGSI PEMBANTU KONEKSI AMAN (GET DATABASE)
+// -------------------------------------------------------------
+async function getDatabase() {
+    if (!dbInstance) {
+        console.log('⏳ Menghubungkan ke MongoDB Cloud...');
         await client.connect();
-        // Menentukan nama database yang akan digunakan (misal: 'gta_hub_db')
-        db = client.db('gta_hub_db');
-        console.log('✅ BERHASIL: Terhubung ke MongoDB Cloud via MongoClient!');
-    } catch (err) {
-        console.error('❌ GAGAL KONEKSI MONGODB:', err.message);
+        dbInstance = client.db('gta_hub_db');
+        console.log('✅ BERHASIL: Terhubung ke MongoDB Cloud!');
     }
+    return dbInstance;
 }
-connectDB();
 
 // -------------------------------------------------------------
-// 2. ROUTE REGISTRASI (MongoClient)
+// 3. ROUTE REGISTRASI AMAN (ANTI-UNDEFINED)
 // -------------------------------------------------------------
-// Menampilkan Halaman Register
-app.get('/register', (req, res) => {
-    res.render('register', { error: null });
-});
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
 
@@ -103,18 +101,20 @@ app.post('/register', async (req, res) => {
     }
 
     try {
+        // Ambil instance database yang sudah dipastikan terhubung
+        const db = await getDatabase();
         const usersCollection = db.collection('users');
 
-        // Cek apakah username sudah ada di koleksi 'users'
+        // Cek apakah username sudah ada
         const userExist = await usersCollection.findOne({ username });
         if (userExist) {
-            return res.render('register', { error: 'Username sudah terdaftar!' });
+            return res.render('register', { error: 'Username sudah terdaftar, gunakan nama lain!' });
         }
 
         // Enkripsi Password
         const hashedPassword = await bcrypt.hash(password, 10);
         
-        // Cek jumlah dokumen untuk menentukan role admin pertama
+        // Cek jumlah dokumen untuk menentukan role admin
         const count = await usersCollection.countDocuments();
         const role = (count === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
 
@@ -126,7 +126,7 @@ app.post('/register', async (req, res) => {
             createdAt: new Date()
         });
         
-        console.log(`✅ User "${username}" berhasil disimpan via MongoClient!`);
+        console.log(`✅ User "${username}" berhasil terdaftar!`);
         res.redirect('/login');
 
     } catch (err) {
