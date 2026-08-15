@@ -3,5 +3,10 @@
     "username": "arythonz",
     "password": "$2b$10$krpe0ccFoJkVF9ZMAa991O.6noqre/jRtmN.A.iQHjVEW011SEBza",
     "role": "admin"
+  },
+  {
+    "username": "arython",
+    "password": "arython",
+    "role": "user"
   }
 ]
