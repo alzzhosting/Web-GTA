@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Beranda - GTA SAMP Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #060b11;
+            --card-bg: #0b131e;
+            --accent-blue: #0088ff;
+            --accent-glow: rgba(0, 136, 255, 0.4);
+            --terminal-bg: #05090e;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Hero Container */
+        .hero-section {
+            padding: 3rem 1rem 2rem;
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero-title {
+            font-weight: 800;
+            font-size: 2.2rem;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .hero-title span {
+            color: var(--accent-blue);
+            background: linear-gradient(135deg, #0088ff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            max-width: 650px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Tombol Modern */
+        .btn-modern-primary {
+            background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%);
+            color: #ffffff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 20px var(--accent-glow);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-modern-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 136, 255, 0.6);
+            color: #fff;
+        }
+
+        .btn-modern-outline {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-modern-outline:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: var(--accent-blue);
+            color: #fff;
+        }
+
+        /* Stats Row */
+        .stats-container {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2.5rem 0;
+        }
+
+        .stat-item h3 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+            color: #ffffff;
+        }
+
+        .stat-item p {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin: 0;
+        }
+
+        /* Terminal Mockup (Kolom Gede) */
+        .terminal-card {
+            background-color: var(--terminal-bg);
+            border: 1px solid rgba(0, 136, 255, 0.25);
+            border-radius: 16px;
+            padding: 20px;
+            max-width: 750px;
+            margin: 0 auto 3rem auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(0, 136, 255, 0.05);
+            text-align: left;
+            font-family: 'Fira Code', monospace;
+            position: relative;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot-red { background-color: #ff5f56; }
+        .dot-yellow { background-color: #ffbd2e; }
+        .dot-green { background-color: #27c93f; }
+
+        .terminal-content {
+            font-size: 0.88rem;
+            min-height: 180px;
+            line-height: 1.7;
+        }
+
+        .terminal-command {
+            color: #38ef7d;
+            margin-bottom: 12px;
+        }
+
+        .terminal-output {
+            color: #00d4ff;
+            transition: opacity 0.4s ease-in-out;
+        }
+
+        /* Cursor Kerap-Klip */
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background-color: #38ef7d;
+            vertical-align: middle;
+            animation: blink 0.8s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Responsif Mobile */
+        @media (max-width: 576px) {
+            .hero-title { font-size: 1.6rem; }
+            .hero-subtitle { font-size: 0.85rem; }
+            .stats-container { gap: 1.5rem; }
+            .stat-item h3 { font-size: 1.4rem; }
+            .terminal-card { padding: 15px; }
+            .terminal-content { font-size: 0.78rem; min-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Memanggil Navbar -->
+    <%- include('navbar') %>
+
+    <div class="container px-3">
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <h1 class="hero-title">
+                Portal Komunitas SAMP <br>
+                <span>Terlengkap & Tercepat</span>
+            </h1>
+            <p class="hero-subtitle">
+                Akses koleksi Modpack GTA bermutu tinggi, Script Monetloader Android aktif, serta kebutuhan server SAMP pilihan dengan performa terbaik.
+            </p>
+
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <a href="/modpack" class="btn-modern-primary">🚀 Lihat Modpack</a>
+                <a href="/store" class="btn-modern-outline">💬 Hubungi Admin</a>
+            </div>
+
+            <!-- Stats -->
+            <div class="stats-container">
+                <div class="stat-item">
+                    <h3>100%</h3>
+                    <p>Gratis Modpack</p>
+                </div>
+                <div class="stat-item">
+                    <h3>24/7</h3>
+                    <p>Uptime Server</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Kolom Gede (Terminal Mockup Bergantian) -->
+        <div class="terminal-card">
+            <div class="terminal-header">
+                <div class="dot dot-red"></div>
+                <div class="dot dot-yellow"></div>
+                <div class="dot dot-green"></div>
+            </div>
+
+            <div class="terminal-content">
+                <div class="terminal-command">$ <span id="typed-command">gtahub status</span></div>
+                <div id="terminal-body" class="terminal-output">
+                    <!-- Teks bergantian akan muncul di sini via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Animasi Teks Bergantian -->
+    <script>
+        // Daftar data yang akan bergantian tampil di kolom besar
+        const slides = [
+            {
+                cmd: "gtahub status --system",
+                lines: [
+                    "GTA SAMP HUB PLATFORM SYSTEM",
+                    "✔ Server Status  : ONLINE (100%)",
+                    "✔ Modpack Mod    : High & Low PC Ready",
+                    "✔ Monetloader    : Support Android v3.0",
+                    "✔ Protection     : Anti-Crash & Clean Log"
+                ]
+            },
+            {
+                cmd: "gtahub fetch --latest-modpack",
+                lines: [
+                    "FEATURED MODPACK SELECTION",
+                    "★ Graphics Realism SA  [v2.1] - By Ramzy",
+                    "★ Low-End PC Booster   [v1.0] - By Community",
+                    "★ Ultra FPS Fixer SAMP [v4.2] - Active",
+                    "➜ Siap didownload di menu 'Share Modpack'!"
+                ]
+            },
+            {
+                cmd: "gtahub check --monetloader",
+                lines: [
+                    "MONETLOADER ANDROID SCRIPTS",
+                    "📱 Auto Reconnect SAMP [Status: Aktif]",
+                    "📱 HUD Custom Cleo     [Status: Aktif]",
+                    "📱 Quick-Fix APK GTA   [Status: Ready]",
+                    "➜ Khusus pengguna GTA SAMP Android!"
+                ]
+            }
+        ];
+
+        let currentSlide = 0;
+        const bodyEl = document.getElementById('terminal-body');
+        const cmdEl = document.getElementById('typed-command');
+
+        function renderSlide() {
+            const data = slides[currentSlide];
+            
+            // Efek memudar saat berganti
+            bodyEl.style.opacity = '0';
+
+            setTimeout(() => {
+                cmdEl.innerText = data.cmd;
+                
+                // Menyusun teks baris demi baris
+                let htmlOutput = "";
+                data.lines.forEach((line, index) => {
+                    const color = index === 0 ? "style='color: #00d4ff; font-weight: bold;'" : "style='color: #a0aec0;'";
+                    htmlOutput += `<div ${color}>${line}</div>`;
+                });
+
+                // Tambahkan kursor kerap-klip di akhir
+                htmlOutput += `<span class="cursor"></span>`;
+                
+                bodyEl.innerHTML = htmlOutput;
+                bodyEl.style.opacity = '1';
+
+                // Pindah ke slide berikutnya
+                currentSlide = (currentSlide + 1) % slides.length;
+            }, 400);
+        }
+
+        // Jalankan pertama kali & atur pergantian setiap 4.5 detik
+        renderSlide();
+        setInterval(renderSlide, 4500);
+    </script>
+</body>
+</html>

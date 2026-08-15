@@ -1,0 +1,81 @@
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top" style="background-color: rgba(6, 11, 17, 0.88); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(var(--accent-rgb, 0, 136, 255), 0.25);">
+  <div class="container px-3">
+    <a class="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2" href="/beranda" style="color: #f1f5f9;">
+      <span class="accent-text">🎮 GTA SAMP HUB</span>
+    </a>
+
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse mt-2 mt-lg-0" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+        <li class="nav-item"><a class="nav-link py-2 px-3 rounded-pill <%= page === 'beranda' ? 'active-link' : '' %>" href="/beranda">Beranda</a></li>
+        <li class="nav-item"><a class="nav-link py-2 px-3 rounded-pill <%= page === 'modpack' ? 'active-link' : '' %>" href="/modpack">Share Modpack</a></li>
+        <li class="nav-item"><a class="nav-link py-2 px-3 rounded-pill <%= page === 'monetloader' ? 'active-link' : '' %>" href="/monetloader">Monetloader</a></li>
+        <li class="nav-item"><a class="nav-link py-2 px-3 rounded-pill <%= page === 'store' ? 'active-link' : '' %>" href="/store">Store GTA</a></li>
+        <% if (user && user.role === 'admin') { %>
+          <li class="nav-item"><a class="nav-link py-2 px-3 rounded-pill bg-warning text-dark fw-bold ms-lg-2" href="/admin">👑 Admin Menu</a></li>
+        <% } %>
+      </ul>
+
+      <div class="d-flex align-items-center justify-content-between pt-3 pt-lg-0 border-top border-secondary border-lg-0 flex-wrap gap-2">
+        <!-- FITUR GANTI WARNA NEON -->
+        <div class="dropdown">
+          <button class="btn btn-sm btn-outline-secondary dropdown-toggle rounded-pill" type="button" data-bs-toggle="dropdown">🎨 Tema</button>
+          <ul class="dropdown-menu dropdown-menu-dark">
+            <li><a class="dropdown-item" href="#" onclick="setTheme('cyan')">🩵 Cyan Blue</a></li>
+            <li><a class="dropdown-item" href="#" onclick="setTheme('emerald')">💚 Emerald Green</a></li>
+            <li><a class="dropdown-item" href="#" onclick="setTheme('purple')">💜 Purple Cyber</a></li>
+          </ul>
+        </div>
+
+        <!-- RUN TIME BADGE -->
+        <span class="badge rounded-pill px-3 py-2 accent-border" style="background: rgba(0,0,0,0.3); font-family: monospace;">
+          ⏱️ <span id="web-runtime">00h 00m 00s</span>
+        </span>
+
+        <div class="d-flex align-items-center gap-2">
+          <span class="small text-light">User: <strong class="accent-text"><%= user ? user.username : '' %></strong></span>
+          <a href="/logout" class="btn btn-sm btn-outline-danger rounded-pill px-3">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<style>
+  :root {
+    --accent-color: #00d4ff;
+    --accent-rgb: 0, 212, 255;
+  }
+  .accent-text { color: var(--accent-color) !important; }
+  .accent-border { border: 1px solid var(--accent-color) !important; color: var(--accent-color) !important; }
+  .active-link { background: rgba(var(--accent-rgb), 0.15); color: var(--accent-color) !important; font-weight: bold; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // Script Live Run Time
+  const serverStartTime = <%= serverStartTime %>;
+  function updateRuntime() {
+    const elapsed = Math.floor((Date.now() - serverStartTime) / 1000);
+    const d = Math.floor(elapsed / 86400);
+    const h = String(Math.floor((elapsed % 86400) / 3600)).padStart(2, '0');
+    const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+    const s = String(elapsed % 60).padStart(2, '0');
+    document.getElementById('web-runtime').innerText = `${d > 0 ? d+'d ' : ''}${h}h ${m}m ${s}s`;
+  }
+  setInterval(updateRuntime, 1000); updateRuntime();
+
+  // Script Theme Switcher
+  function setTheme(theme) {
+    let color = '#00d4ff', rgb = '0, 212, 255';
+    if(theme === 'emerald') { color = '#38ef7d'; rgb = '56, 239, 125'; }
+    if(theme === 'purple') { color = '#b06ab3'; rgb = '176, 106, 179'; }
+    document.documentElement.style.setProperty('--accent-color', color);
+    document.documentElement.style.setProperty('--accent-rgb', rgb);
+    localStorage.setItem('gta_theme', theme);
+  }
+  if(localStorage.getItem('gta_theme')) setTheme(localStorage.getItem('gta_theme'));
+</script>

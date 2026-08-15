@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Monetloader - GTA SAMP Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #060b11; color: #f1f5f9; font-family: 'Poppins', sans-serif; min-height: 100vh; }
+        .cyber-card { background-color: #0b131e; border: 1px solid rgba(0, 136, 255, 0.25); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
+        .btn-download { background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%); color: #fff; border: none; border-radius: 20px; font-weight: 600; font-size: 0.85rem; padding: 6px 16px; box-shadow: 0 4px 12px rgba(0, 136, 255, 0.3); text-decoration: none; transition: 0.3s; }
+        .btn-download:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(0, 136, 255, 0.5); color: #fff; }
+        @media (max-width: 576px) { .table { font-size: 0.85rem; } }
+    </style>
+</head>
+<body>
+    <%- include('navbar') %>
+
+    <div class="container my-4 px-3">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="fw-bold mb-1" style="background: linear-gradient(135deg, #0088ff 0%, #00d4ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">📱 Monetloader Android</h2>
+                <p class="text-secondary small mb-0">Script & Cleo mod khusus GTA SAMP Android</p>
+            </div>
+        </div>
+
+        <div class="cyber-card">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                    <thead style="border-bottom: 1px solid rgba(0, 136, 255, 0.3); background: rgba(0, 136, 255, 0.08);">
+                        <tr class="text-info">
+                            <th class="ps-4 py-3">Nama Script</th>
+                            <th class="py-3">Versi</th>
+                            <th class="py-3">Status</th>
+                            <th class="text-center pe-4 py-3">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% scripts.forEach(item => { %>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                                <td class="ps-4 fw-semibold text-light py-3"><%= item.nama %></td>
+                                <td class="py-3"><span class="badge rounded-pill px-3 py-2" style="background: rgba(148, 163, 184, 0.15); color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.3);"><%= item.versi %></span></td>
+                                <td class="py-3"><span class="badge rounded-pill px-3 py-2" style="background: rgba(39, 201, 63, 0.15); color: #27c93f; border: 1px solid rgba(39, 201, 63, 0.3);"><%= item.status %></span></td>
+                                <td class="text-center pe-4 py-3">
+                                    <a href="<%= item.link %>" class="btn-download d-inline-block">Unduh Script</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

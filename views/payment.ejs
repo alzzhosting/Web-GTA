@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pembayaran QRIS - GTA SAMP Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            background-color: #060b11; 
+            color: #f1f5f9; 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh; 
+        }
+
+        /* Card Pembayaran Cyber Mode */
+        .cyber-card { 
+            background-color: #0b131e; 
+            border: 1px solid rgba(0, 136, 255, 0.25); 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6); 
+            overflow: hidden; 
+        }
+
+        /* Container Gambar QRIS */
+        .qris-box {
+            background: #ffffff;
+            padding: 16px;
+            border-radius: 16px;
+            display: inline-block;
+            box-shadow: 0 0 25px rgba(0, 212, 255, 0.3);
+            border: 2px solid #00d4ff;
+        }
+
+        .qris-img {
+            max-width: 260px;
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            display: block;
+        }
+
+        /* Tombol Konfirmasi WhatsApp */
+        .btn-confirm-wa {
+            background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+            color: #ffffff !important;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            padding: 12px 28px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-confirm-wa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.5);
+            color: #ffffff !important;
+        }
+
+        /* Badge E-Wallet & Bank */
+        .pay-badge {
+            background: rgba(0, 136, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 136, 255, 0.25);
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Memanggil Navbar -->
+    <%- include('navbar') %>
+
+    <div class="container my-4 px-3">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold mb-1" style="background: linear-gradient(135deg, #0088ff 0%, #00d4ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                💳 Pembayaran via QRIS
+            </h2>
+            <p class="text-secondary small mb-0">Pindai kode QRIS di bawah ini menggunakan aplikasi E-Wallet atau M-Banking milikmu</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+                <div class="cyber-card p-4 p-sm-5 text-center">
+                    
+                    <!-- Logo / Header QRIS -->
+                    <div class="mb-3">
+                        <span class="badge bg-danger px-3 py-2 fw-bold text-uppercase" style="letter-spacing: 1px;">QRIS ALL PAYMENT</span>
+                    </div>
+
+                    <!-- Tampilan Gambar QRIS -->
+                    <div class="qris-box my-3">
+                        <!-- Jalur Gambar QRIS (Bisa diganti dengan path gambar/link kamu) -->
+                        <img src="/images/qris.png" alt="Kode QRIS Pembayaran" class="qris-img mx-auto" onerror="this.src='https://via.placeholder.com/300x300/ffffff/000000?text=Gambar+QRIS+Kamu';">
+                    </div>
+
+                    <!-- Panduan / Dukungan Pembayaran -->
+                    <div class="my-3">
+                        <p class="text-secondary small mb-2">Mendukung Pembayaran:</p>
+                        <div class="d-flex flex-wrap justify-content-center gap-2">
+                            <span class="pay-badge">DANA</span>
+                            <span class="pay-badge">GoPay</span>
+                            <span class="pay-badge">OVO</span>
+                            <span class="pay-badge">ShopeePay</span>
+                            <span class="pay-badge">BCA / Mandiri / BRI</span>
+                        </div>
+                    </div>
+
+                    <hr class="border-secondary my-4">
+
+                    <!-- Instruksi Pembayaran -->
+                    <div class="text-start mb-4 bg-dark p-3 rounded-3 border border-secondary">
+                        <h6 class="fw-bold text-info mb-2">📌 Cara Melakukan Pembayaran:</h6>
+                        <ol class="small text-secondary mb-0 ps-3">
+                            <li class="mb-1">Buka aplikasi E-Wallet atau M-Banking milikmu.</li>
+                            <li class="mb-1">Pilih menu <strong>Scan / Bayar QRIS</strong>.</li>
+                            <li class="mb-1">Arahkan kamera ke gambar QRIS di atas.</li>
+                            <li class="mb-1">Masukkan nominal pembayaran sesuai kesepakatan.</li>
+                            <li>Simpan atau *screenshot* bukti transfer setelah berhasil.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Tombol Kirim Bukti Transfer ke WhatsApp -->
+                    <div>
+                        <a href="https://wa.me/6285934686607?text=Halo%20Admin,%20saya%20<%= encodeURIComponent(user.username) %>%20ingin%20mengirimkan%20bukti%20pembayaran%20QRIS." target="_blank" class="btn-confirm-wa w-100">
+                            💬 Konfirmasi / Kirim Bukti Pembayaran
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

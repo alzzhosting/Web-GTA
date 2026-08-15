@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - GTA SAMP Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            background-color: #060b11; 
+            color: #f1f5f9; 
+            font-family: 'Poppins', sans-serif; 
+            min-height: 100vh;
+        }
+
+        /* Card Admin Cyber Style */
+        .admin-card { 
+            background-color: #0b131e; 
+            border: 1px solid rgba(0, 136, 255, 0.25); 
+            border-radius: 16px; 
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        /* Label Keterangan Di Atas Input Box */
+        .form-label-custom {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        /* Style Kotak Input Form */
+        .form-control-custom {
+            background-color: #05090e;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            color: #ffffff;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control-custom:focus {
+            background-color: #05090e;
+            border-color: #00d4ff;
+            box-shadow: 0 0 12px rgba(0, 212, 255, 0.3);
+            color: #ffffff;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Memanggil Navbar -->
+    <%- include('navbar') %>
+
+    <div class="container my-4 px-3">
+        <h2 class="fw-bold mb-4 accent-text">👑 Admin Control Panel</h2>
+
+        <div class="row g-4">
+            
+            <!-- FORM 1: TAMBAH MODPACK BARU -->
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <h5 class="fw-bold text-info mb-4">➕ Tambah Modpack Baru</h5>
+                    <form action="/admin/add-modpack" method="POST">
+                        
+                        <div class="mb-3">
+                            <label class="form-label-custom">📌 Nama Modpack</label>
+                            <input type="text" name="nama" class="form-control form-control-custom" placeholder="Contoh: Modpack Compe Android FPS UP" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">🏷️ Versi Modpack</label>
+                            <input type="text" name="versi" class="form-control form-control-custom" placeholder="Contoh: v1.0 / v2.1" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">👤 Nama Uploader / Pembuat</label>
+                            <input type="text" name="pembuat" class="form-control form-control-custom" placeholder="Contoh: Ramzy" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label-custom">🔗 Link Download (Mediafire / Drive)</label>
+                            <input type="url" name="link" class="form-control form-control-custom" placeholder="https://mediafire.com/file/..." required>
+                        </div>
+
+                        <button type="submit" class="btn btn-warning w-100 fw-bold py-2">Simpan Modpack</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- FORM 2: TAMBAH SCRIPT MONETLOADER -->
+            <div class="col-md-6">
+                <div class="admin-card">
+                    <h5 class="fw-bold text-info mb-4">➕ Tambah Script Monetloader</h5>
+                    <form action="/admin/add-monetloader" method="POST">
+                        
+                        <div class="mb-3">
+                            <label class="form-label-custom">📱 Nama Script</label>
+                            <input type="text" name="nama" class="form-control form-control-custom" placeholder="Contoh: Auto Reconnect SAMP" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">🏷️ Versi Script</label>
+                            <input type="text" name="versi" class="form-control form-control-custom" placeholder="Contoh: v1.2" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">⚡ Status Script</label>
+                            <input type="text" name="status" class="form-control form-control-custom" placeholder="Contoh: Aktif / Support v3.0" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label-custom">🔗 Link Download Script</label>
+                            <input type="url" name="link" class="form-control form-control-custom" placeholder="https://mediafire.com/file/..." required>
+                        </div>
+
+                        <button type="submit" class="btn btn-info w-100 fw-bold py-2 text-white">Simpan Script</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- TABEL DAFTAR USER TERDAFTAR -->
+        <div class="admin-card mt-4">
+            <h5 class="fw-bold text-light mb-3">👥 Daftar User Terdaftar (infoakun.json)</h5>
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                    <thead style="border-bottom: 1px solid rgba(0, 136, 255, 0.3);">
+                        <tr class="text-info">
+                            <th class="ps-3 py-3">Username</th>
+                            <th class="py-3">Role Hak Akses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% users.forEach(u => { %>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                                <td class="ps-3 py-3 fw-semibold"><%= u.username %></td>
+                                <td class="py-3">
+                                    <span class="badge rounded-pill px-3 py-2 <%= u.role === 'admin' ? 'bg-warning text-dark fw-bold' : 'bg-secondary' %>">
+                                        <%= u.role || 'user' %>
+                                    </span>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Store GTA - GTA SAMP Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { background-color: #060b11; color: #f1f5f9; font-family: 'Poppins', sans-serif; min-height: 100vh; }
+        .cyber-card { background-color: #0b131e; border: 1px solid rgba(0, 136, 255, 0.25); border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); overflow: hidden; }
+        
+        /* Gaya Tombol Cyber Order */
+        .btn-order { 
+            background: linear-gradient(135deg, #0072ff 0%, #00c6ff 100%); 
+            color: #ffffff !important; 
+            border: none; 
+            border-radius: 20px; 
+            font-weight: 600; 
+            font-size: 0.85rem; 
+            padding: 8px 18px; 
+            box-shadow: 0 4px 12px rgba(0, 136, 255, 0.3); 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+            display: inline-block;
+        }
+        .btn-order:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 6px 18px rgba(0, 136, 255, 0.5); 
+            color: #ffffff !important; 
+        }
+        
+        @media (max-width: 576px) { .table { font-size: 0.85rem; } }
+    </style>
+</head>
+<body>
+    <%- include('navbar') %>
+
+    <div class="container my-4 px-3">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h2 class="fw-bold mb-1" style="background: linear-gradient(135deg, #0088ff 0%, #00d4ff 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">🛒 GTA SAMP Store Needed</h2>
+                <p class="text-secondary small mb-0">Layanan & kebutuhan server SAMP terpercaya</p>
+            </div>
+        </div>
+
+        <div class="cyber-card">
+            <div class="table-responsive">
+                <table class="table table-dark table-hover align-middle mb-0" style="background-color: transparent;">
+                    <thead style="border-bottom: 1px solid rgba(0, 136, 255, 0.3); background: rgba(0, 136, 255, 0.08);">
+                        <tr class="text-info">
+                            <th class="ps-4 py-3">Layanan / Produk</th>
+                            <th class="py-3">Harga</th>
+                            <th class="py-3">Garansi</th>
+                            <th class="text-center pe-4 py-3">Order</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% items.forEach(item => { %>
+                            <tr style="border-bottom: 1px solid rgba(255, 255, 255, 0.05);">
+                                <td class="ps-4 fw-semibold text-light py-3"><%= item.produk %></td>
+                                <td class="py-3 fw-bold" style="color: #00d4ff;"><%= item.harga %></td>
+                                <td class="py-3 text-secondary"><%= item.garansi %></td>
+                                <td class="text-center pe-4 py-3">
+                                    <!-- PERBAIKAN: Tombol Link WhatsApp Aktif -->
+                                    <a href="https://wa.me/6285934686607?text=Halo%20Admin,%20saya%20ingin%20membeli%20<%= encodeURIComponent(item.produk) %>" target="_blank" class="btn-order">
+                                        Hubungi Admin
+                                    </a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
