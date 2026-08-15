@@ -65,74 +65,73 @@ function requireAdmin(req, res, next) {
     next();
 }
 
-const { MongoClient } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require('mongodb');
 
-// -------------------------------------------------------------
-// 1. KONEKSI MONGODB ATLAS MENGGUNAKAN MONGO CLIENT
-// Pastikan tanda kurung siku <> di username sudah dihapus
-// -------------------------------------------------------------
+// 1. KONEKSI RESMI MONGODB ATLAS STABLE API
+// Pastikan ganti <db_password> dengan password database kamu yang sebenarnya
 const uri = "mongodb+srv://dyraaguest_db_user:j7jP600GTPhcxLe@database.72hinz0.mongodb.net/?appName=Database";
-const client = new MongoClient(uri);
 
-// Variabel penampung koneksi global
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
 let dbInstance = null;
 
-// -------------------------------------------------------------
-// 2. FUNGSI PEMBANTU KONEKSI AMAN (GET DATABASE)
-// -------------------------------------------------------------
+// Fungsi Pembantu Ambil Database (Koneksi Persisten untuk Express)
 async function getDatabase() {
-    if (!dbInstance) {
-        console.log('⏳ Menghubungkan ke MongoDB Cloud...');
-        await client.connect();
-        dbInstance = client.db('gta_hub_db');
-        console.log('✅ BERHASIL: Terhubung ke MongoDB Cloud!');
-    }
-    return dbInstance;
+  if (!dbInstance) {
+    console.log("⏳ Menghubungkan ke MongoDB Atlas (Stable API)...");
+    await client.connect();
+    
+    // Tes ping seperti contoh resmi MongoDB
+    await client.db("admin").command({ ping: 1 });
+    console.log("✅ Ping berhasil! Berhasil terhubung ke MongoDB Atlas!");
+    
+    // Menyimpan nama database project kita
+    dbInstance = client.db("gta_hub_db");
+  }
+  return dbInstance;
 }
 
-// -------------------------------------------------------------
-// 3. ROUTE REGISTRASI AMAN (ANTI-UNDEFINED)
-// -------------------------------------------------------------
+// 2. ROUTE REGISTRASI
 app.post('/register', async (req, res) => {
-    const { username, password } = req.body;
+  const { username, password } = req.body;
 
-    if (!username || !password) {
-        return res.render('register', { error: 'Username dan Password wajib diisi!' });
+  if (!username || !password) {
+    return res.render('register', { error: 'Username dan Password wajib diisi!' });
+  }
+
+  try {
+    const db = await getDatabase();
+    const usersCollection = db.collection('users');
+
+    const userExist = await usersCollection.findOne({ username });
+    if (userExist) {
+      return res.render('register', { error: 'Username sudah terdaftar!' });
     }
 
-    try {
-        // Ambil instance database yang sudah dipastikan terhubung
-        const db = await getDatabase();
-        const usersCollection = db.collection('users');
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const count = await usersCollection.countDocuments();
+    const role = (count === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
 
-        // Cek apakah username sudah ada
-        const userExist = await usersCollection.findOne({ username });
-        if (userExist) {
-            return res.render('register', { error: 'Username sudah terdaftar, gunakan nama lain!' });
-        }
+    await usersCollection.insertOne({
+      username: username,
+      password: hashedPassword,
+      role: role,
+      createdAt: new Date()
+    });
 
-        // Enkripsi Password
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
-        // Cek jumlah dokumen untuk menentukan role admin
-        const count = await usersCollection.countDocuments();
-        const role = (count === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
+    console.log(`✅ User "${username}" berhasil terdaftar via Stable API!`);
+    res.redirect('/login');
 
-        // Simpan dokumen user baru
-        await usersCollection.insertOne({
-            username: username,
-            password: hashedPassword,
-            role: role,
-            createdAt: new Date()
-        });
-        
-        console.log(`✅ User "${username}" berhasil terdaftar!`);
-        res.redirect('/login');
-
-    } catch (err) {
-        console.error('❌ DETIL ERROR REGISTRASI:', err);
-        res.render('register', { error: 'Gagal mendaftar: ' + err.message });
-    }
+  } catch (err) {
+    console.error("❌ Error Registrasi:", err);
+    res.render('register', { error: 'Gagal mendaftar: ' + err.message });
+  }
 });
 
 // -------------------------------------------------------------
