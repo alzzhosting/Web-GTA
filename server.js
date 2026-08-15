@@ -65,36 +65,57 @@ function requireAdmin(req, res, next) {
     next();
 }
 
+const mongoose = require('mongoose');
+
+// Ganti bagian ini dengan Connection String dari screenshot-mu
+// Pastikan kamu mengganti <db_username> dengan username database-mu!
+const dbURI = "mongodb+srv://dyraaguest_db_user:j7jP600GTPhcxLe@database.72hinz0.mongodb.net/?appName=Database";
+
+mongoose.connect(dbURI)
+  .then(() => console.log('✅ Terhubung ke MongoDB Atlas!'))
+  .catch((err) => console.log('❌ Gagal koneksi:', err));
+
+// Definisikan Skema Data (Struktur User)
+const UserSchema = new mongoose.Schema({
+    username: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+    role: { type: String, default: 'user' }
+});
+const User = mongoose.model('User', UserSchema);
+
+
 // --- ROUTE AKUN ---
 app.get('/login', (req, res) => res.render('login', { error: null }));
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    const users = readData(USERS_FILE);
-    const user = users.find(u => u.username === username);
-
-    if (user && await bcrypt.compare(password, user.password)) {
-        req.session.user = { username: user.username, role: user.role || 'user' };
-        return res.redirect('/beranda');
+    try {
+        const user = await User.findOne({ username }); // Mencari user di MongoDB
+        if (user && await bcrypt.compare(password, user.password)) {
+            req.session.user = { username: user.username, role: user.role };
+            return res.redirect('/beranda');
+        }
+        res.render('login', { error: 'Username atau password salah!' });
+    } catch (err) {
+        res.render('login', { error: 'Terjadi kesalahan sistem.' });
     }
-    res.render('login', { error: 'Username atau password salah!' });
 });
 
 app.get('/register', (req, res) => res.render('register', { error: null }));
 app.post('/register', async (req, res) => {
     const { username, password } = req.body;
-    const users = readData(USERS_FILE);
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        // Cek apakah ada user sama sekali (untuk menentukan admin pertama)
+        const count = await User.countDocuments();
+        const role = (count === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
 
-    if (users.find(u => u.username === username)) {
-        return res.render('register', { error: 'Username sudah terdaftar!' });
+        const newUser = new User({ username, password: hashedPassword, role });
+        await newUser.save(); // Data tersimpan permanen di Cloud!
+        res.redirect('/login');
+    } catch (err) {
+        res.render('register', { error: 'Username sudah terdaftar!' });
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    // Akun pertama atau username 'admin' otomatis jadi Admin
-    const role = (users.length === 0 || username.toLowerCase() === 'admin') ? 'admin' : 'user';
-
-    users.push({ username, password: hashedPassword, role });
-    writeData(USERS_FILE, users);
-    res.redirect('/login');
 });
 
 app.get('/logout', (req, res) => {
